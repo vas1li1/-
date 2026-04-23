@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Видеохостинг</title>
+    <link rel="stylesheet" href="style.css">
+<style>
+	body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* Стили для формы загрузки */
+.upload-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.upload-section h2 {
+    margin-top: 0;
+}
+
+#uploadForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#videoInput, #videoTitle {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#videoTitle {
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для сетки видео */
+.videos-section h2 {
+    color: #333;
+}
+
+.videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Карточка видео */
+.video-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.video-card video {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.video-info {
+    padding: 15px;
+}
+
+.video-title {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #333;
+}
+/* Стили для кнопки удаления */
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Стили для подтверждения удаления */
+.confirm-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.confirm-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+/* Стили для блока авторизации */
+.auth-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.auth-section h2 {
+    margin-top: 0;
+}
+
+#authForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#username, #password {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#authStatus {
+    margin-top: 10px;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+
+</style>
+	<link rel="icon" type="image/png" sizes="32x32" href="11.png">
+<link rel="icon" type="image/png" sizes="16x16" href="11.png">
+
+<!-- Иконка для Apple Touch (iPhone, iPad) -->
+<link rel="apple-touch-icon" sizes="180x180" href="11.png">
+
+<!-- Иконки для Android Chrome -->
+<link rel="icon" type="image/png" sizes="192x192" href="11.png">
+<link rel="icon" type="image/png" sizes="512x512" href="11.png">
+</head>
+<body>
+<table width = "100%" bgcolor ="white" >
+			<tr>
+				<td>
+				</td>
+				<td><img src = "1.png" height = "30%" width = "10%"> 
+			
+				</td>
+				<td> <h1> Ярик видео </h1>
+				</td>
+				</td>
+				<td>
+				<td width = "30%"></td>
+				</td>
+			</tr>
+	</table>
+    <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Видеохостинг</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Видеохостинг — Ярик видео!</h1>
+
+        <!-- Блок авторизации -->
+        <div class="auth-section">
+            <h2>Вход / Регистрация</h2>
+            <form id="authForm">
+                <input type="text" id="username" placeholder="Имя пользователя" required>
+                <input type="password" id="password" placeholder="Пароль" required>
+                <button type="submit">Войти / Зарегистрироваться</button>
+            </form>
+            <p id="authStatus"></p>
+        </div>
+
+        <!-- Форма загрузки (изначально скрыта) -->
+        <div id="uploadSection" class="upload-section" style="display: none;">
+            <h2>Загрузить видео</h2>
+            <form id="uploadForm">
+                <input type="file" id="videoInput" accept="video/*" required>
+                <input type="text" id="videoTitle" placeholder="Название видео" required>
+                <button type="submit">Загрузить видео</button>
+            </form>
+        </div>
+
+        <!-- Раздел с видео -->
+        <div class="videos-section">
+            <h2>Все видео</h2>
+            <div id="videosList" class="videos-grid">
+                <p>Пока нет загруженных видео.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+	<script text = "JavaScript">
+// Данные пользователей и видео
+let users = JSON.parse(localStorage.getItem('users')) || [];
+let videos = JSON.parse(localStorage.getItem('uploadedVideos')) || [];
+let currentUser = null;
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем авторизацию
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        showUploadSection();
+    }
+
+    renderVideos();
+    setupAuthForm();
+    setupUploadForm();
+});
+
+// Настройка формы авторизации
+function setupAuthForm() {
+    const authForm = document.getElementById('authForm');
+    authForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        // Проверка существующего пользователя
+        const existingUser = users.find(user => user.username === username);
+
+        if (existingUser) {
+            // Вход
+            if (existingUser.password === password) {
+                currentUser = existingUser;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showUploadSection();
+                document.getElementById('authStatus').textContent = `Добро пожаловать, ${username}!`;
+            } else {
+                document.getElementById('authStatus').textContent = 'Неверный пароль!';
+            }
+        } else {
+            // Регистрация нового пользователя
+            const newUser = {
+                id: Date.now(),
+                username: username,
+                password: password
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showUploadSection();
+            document.getElementById('authStatus').textContent = `Аккаунт ${username} создан! Добро пожаловать!`;
+        }
+    });
+}
+
+// Показ секции загрузки после авторизации
+function showUploadSection() {
+    document.getElementById('uploadSection').style.display = 'block';
+}
+
+// Настройка формы загрузки
+function setupUploadForm() {
+    const form = document.getElementById('uploadForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const fileInput = document.getElementById('videoInput');
+        const titleInput = document.getElementById('videoTitle');
+        const file = fileInput.files[0];
+        const title = titleInput.value.trim();
+
+        if (file && title && currentUser) {
+            // Создаём объект видео с информацией о пользователе
+            const videoObject = {
+                id: Date.now(),
+                title: title,
+                file: file,
+                url: URL.createObjectURL(file),
+                uploadDate: new Date().toLocaleDateString('ru-RU'),
+                username: currentUser.username // Привязка к пользователю
+            };
+
+            // Добавляем в массив
+            videos.unshift(videoObject);
+
+            // Сохраняем в localStorage
+            localStorage.setItem('uploadedVideos', JSON.stringify(videos));
+
+            // Обновляем отображение
+            renderVideos();
+
+            // Очищаем форму
+            form.reset();
+            alert('Видео успешно загружено!');
+        } else {
+            alert('Пожалуйста, выберите видеофайл, введите название и войдите в аккаунт.');
+        }
+    });
+}
+
+// Функция удаления видео
+function deleteVideo(videoId) {
+    // Подтверждение удаления
+    const confirmation = confirm('Вы уверены, что хотите удалить это видео?');
+
+    if (confirmation) {
+        // Фильтруем массив, удаляя видео с указанным ID
+        videos = videos.filter(video => video.id !== videoId);
+
+        // Сохраняем обновлённый массив
+        localStorage.setItem('uploadedVideos', JSON.stringify(videos));
+
+        // Обновляем отображение
+        renderVideos();
+        alert('Видео удалено!');
+    }
+}
+
+// Отрисовка всех видео
+function renderVideos() {
+    const container = document.getElementById('videosList');
+
+    if (videos.length === 0) {
+        container.innerHTML = '<p>Пока нет загруженных видео.</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    videos.forEach(video => {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+
+        videoCard.innerHTML = `
+            <video controls>
+                <source src="${video.url}" type="${video.file.type}">
+                Ваш браузер не поддерживает видео.
+            </video>
+            <div class="video-info">
+                <h3 class="video-title">${video.title}</h3>
+                <p>Автор: ${video.username}</p>
+                <p>Загружено: ${video.uploadDate}</p>
+                ${currentUser && currentUser.username === video.username ?
+                    '<button class="delete-btn" onclick="deleteVideo(' + video.id + ')">Удалить видео</button>' : ''}
+            </div>
+        `;
+
+        container.appendChild(videoCard);
+    });
+}
+
+
+	</script>
+</body>
+</html>
